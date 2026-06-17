@@ -1,36 +1,71 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import React, { useState } from 'react';
 import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+  View,
+  Text,
+  Button,
+  FlatList,
+  PermissionsAndroid,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+
+import CallLogs from 'react-native-call-log';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [calls, setCalls] = useState<any[]>([]);
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
+  const requestPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+        {
+          title: 'Call Log Permission',
+          message: 'This app needs access to your call logs.',
+          buttonPositive: 'Allow',
+        },
+      );
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
+  const loadCalls = async () => {
+    const hasPermission = await requestPermission();
+
+    if (!hasPermission) {
+      Alert.alert('Permission denied');
+      return;
+    }
+
+    try {
+      const logs = await CallLogs.load(20);
+      setCalls(logs);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Failed to load call logs');
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
+      <Text style={styles.title}>Call Log CRM</Text>
+
+      <Button title="Load Call History" onPress={loadCalls} />
+
+      <FlatList
+        data={calls}
+        keyExtractor={(_, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text>Name: {item.name || 'Unknown'}</Text>
+            <Text>Phone: {item.phoneNumber}</Text>
+            <Text>Type: {item.type}</Text>
+            <Text>Duration: {item.duration} sec</Text>
+          </View>
+        )}
       />
     </View>
   );
@@ -39,6 +74,19 @@ function AppContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
+    marginTop: 50,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  card: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginVertical: 5,
   },
 });
 
