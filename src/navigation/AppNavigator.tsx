@@ -1,4 +1,5 @@
 import React from 'react';
+import ContactDetails from '../screens/Contacts/ContactDetails';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -28,6 +29,12 @@ const AppNavigator = () => {
                     name="AddContact"
                     component={AddContact}
                     options={{ title: 'Add Contact' }}
+                />
+
+                <Stack.Screen
+                    name="ContactDetails"
+                    component={ContactDetails}
+                    options={{ title: 'Contact Details' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
