@@ -1,84 +1,84 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    View,
-    Text,
-    TextInput,
-    Button,
-    StyleSheet,
-    Alert,
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  FlatList,
 } from 'react-native';
 
-const AddContact = () => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [company, setCompany] = useState('');
+import { getContacts } from '../../services/contacts/contactStorage';
 
-    const saveContact = () => {
-        Alert.alert(
-            'Contact Saved',
-            `Name: ${name}\nPhone: ${phone}\nCompany: ${company}`,
-        );
-    };
+const ContactList = ({ navigation }: any) => {
+  const [contacts, setContacts] = useState<any[]>([]);
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Add Contact</Text>
+  const loadContacts = async () => {
+    const savedContacts = await getContacts();
+    setContacts(savedContacts);
+  };
 
-            <Text style={styles.label}>Name</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter contact name"
-                value={name}
-                onChangeText={setName}
-            />
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadContacts();
+    });
 
-            <Text style={styles.label}>Phone Number</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter phone number"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-            />
+    return unsubscribe;
+  }, [navigation]);
 
-            <Text style={styles.label}>Company</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter company name"
-                value={company}
-                onChangeText={setCompany}
-            />
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Contacts</Text>
 
-            <Button
-                title="Save Contact"
-                onPress={saveContact}
-            />
-        </View>
-    );
+      <Button
+        title="Add Contact"
+        onPress={() => navigation.navigate('AddContact')}
+      />
+
+      <View style={styles.spacing} />
+
+      {contacts.length === 0 ? (
+        <Text>No contacts added yet.</Text>
+      ) : (
+        <FlatList
+          data={contacts}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text>{item.phone}</Text>
+              <Text>{item.company}</Text>
+            </View>
+          )}
+        />
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 5,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 15,
-    },
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  spacing: {
+    height: 20,
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 10,
+  },
+  name: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
 
-export default AddContact;
+export default ContactList;
