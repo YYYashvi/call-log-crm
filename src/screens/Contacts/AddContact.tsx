@@ -14,7 +14,7 @@ const AddContact = ({navigation}: any) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
-
+  const [notes, setNotes] = useState('');
   const handleSave = async () => {
     if (!name || !phone) {
       Alert.alert('Validation', 'Name and Phone are required');
@@ -26,6 +26,7 @@ const AddContact = ({navigation}: any) => {
       name,
       phone,
       company,
+      notes,
     };
 
     await saveContact(contact);
@@ -35,6 +36,7 @@ const AddContact = ({navigation}: any) => {
     setName('');
     setPhone('');
     setCompany('');
+    setNotes('');
 
     navigation.goBack();
   };
@@ -68,6 +70,15 @@ const AddContact = ({navigation}: any) => {
         onChangeText={setCompany}
       />
 
+      <Text style={styles.label}>Notes</Text>
+      <TextInput
+        style={styles.noteInput}
+        placeholder="Enter notes about this contact"
+        value={notes}
+        onChangeText={setNotes}
+        multiline
+      />
+
       <Button
         title="Save Contact"
         onPress={handleSave}
@@ -98,6 +109,16 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
   },
+  noteInput: {
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 8,
+  padding: 10,
+  minHeight: 100,
+  textAlignVertical: 'top',
+  marginBottom: 15,
+},
+
 });
 
 export default AddContact;

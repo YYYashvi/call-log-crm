@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {getContacts} from '../../services/contacts/contactStorage';
+import { getContacts } from '../../services/contacts/contactStorage';
 
-const ContactList = ({navigation}: any) => {
+const ContactList = ({ navigation }: any) => {
   const [contacts, setContacts] = useState<any[]>([]);
 
   const loadContacts = async () => {
@@ -43,7 +43,7 @@ const ContactList = ({navigation}: any) => {
         <FlatList
           data={contacts}
           keyExtractor={item => item.id}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
               onPress={() =>
@@ -54,6 +54,7 @@ const ContactList = ({navigation}: any) => {
               <Text style={styles.name}>{item.name}</Text>
               <Text>{item.phone}</Text>
               <Text>{item.company}</Text>
+              <Text>{item.notes}</Text>
             </TouchableOpacity>
           )}
         />
