@@ -11,7 +11,7 @@ import {
 import CallCard from '../../components/CallCard';
 import { getCallLogs } from '../../services/calling/callLogs';
 
-const CallHistoryList = () => {
+const CallHistoryList = ({ navigation }: any) => {
     const [calls, setCalls] = useState<any[]>([]);
 
     const loadCalls = async () => {
@@ -27,7 +27,17 @@ const CallHistoryList = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Call Log CRM</Text>
 
-            <Button title="Load Call History" onPress={loadCalls} />
+            <Button
+                title="Go To Contacts"
+                onPress={() => navigation.navigate('Contacts')}
+            />
+
+            <View style={styles.spacing} />
+
+            <Button
+                title="Load Call History"
+                onPress={loadCalls}
+            />
 
             <FlatList
                 data={calls}
@@ -48,6 +58,9 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+    },
+    spacing: {
+        height: 10,
     },
 });
 

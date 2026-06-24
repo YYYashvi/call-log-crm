@@ -1,8 +1,8 @@
 import React from 'react';
-import CallHistoryList from './src/screens/CallHistory/CallHistoryList';
+import AppNavigator from './src/navigation/AppNavigator';
 
 function App() {
-  return <CallHistoryList />;
+  return <AppNavigator />;
 }
 
 export default App;
